@@ -3,11 +3,12 @@ const { autoUpdater }                        = require('electron-updater');
 const im                                     = require('imagemagick');
 const log                                    = require('electron-log');
 const path                                   = require('path');
+const fs                                     = require('fs');
 const { exec }                               = require('child_process');
 
 const MenuBuilder                            = require('./menu');
 const Dialog                                 = require('./dialog');
-const { convertToBase64, resolveHtmlPath }   = require("./utils");
+const { convertToBase64 }                    = require("./utils");
 
 class AppUpdater {
     constructor() {
@@ -16,10 +17,9 @@ class AppUpdater {
         autoUpdater.checkForUpdatesAndNotify();
     }
 }
-//const isDev = require('electron-is-dev');
+const isDev = require('electron-is-dev');
 
 let mainWindow = null;
-//const isDev = process.env.NODE_ENV || 'development';
 
 const createWindow = () => {
     const RESOURCES_PATH = app.isPackaged
@@ -37,17 +37,13 @@ const createWindow = () => {
         icon: getAssetPath('icon.png'),
         webPreferences: {
             nodeIntegration: true,
-            //enableRemoteModule: true,
             preload:  path.join(__dirname, 'preload.js'),
         },
     });
 
-
-    // mainWindow.loadURL(resolveHtmlPath('../build/index.html'));
-    mainWindow.loadURL('http://localhost:3000');
-    // mainWindow.loadURL(isDev
-    //     ? 'http://localhost:3000'
-    //     : `file://${path.join(__dirname, '../build/index.html')}`);
+    mainWindow.loadURL(isDev
+        ? 'http://localhost:3000'
+        : `file://${path.join(__dirname, '../build/index.html')}`);
 
     mainWindow.on('ready-to-show', () => {
         if (!mainWindow) {
@@ -79,6 +75,10 @@ const createWindow = () => {
 };
 
 ipcMain.handle('rotate', (event, angle, path) => {
+    if(!fs.existsSync(path)) {
+        mainWindow.webContents.send('pathImage', '', 'File doesn\'t exist');
+        return;
+    }
     exec(`convert ${path} -distort SRT "%[fx:aa=${angle}*pi/180;(w*abs(sin(aa))+h*abs(cos(aa)))/min(w,h)], ${angle}" ${path}`, async (error, stdout, stderr) => {
         if (error) {
             console.error(`error: ${error.message}`);

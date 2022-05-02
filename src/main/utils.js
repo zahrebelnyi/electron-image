@@ -1,21 +1,5 @@
-const { URL } = require('url');
 const path    = require('path');
 const fs      = require('fs').promises;
-
-let resolveHtmlPath;
-
-if (process.env.NODE_ENV === 'development') {
-    const port = process.env.PORT || 3000;
-    resolveHtmlPath = (htmlFileName) => {
-        const url = new URL(`http://localhost:${port}`);
-        url.pathname = htmlFileName;
-        return url.href;
-    };
-} else {
-    resolveHtmlPath = (htmlFileName) => {
-        return `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}`;
-    };
-}
 
 async function convertToBase64(pathImage) {
     const filename = path.basename(pathImage);
@@ -38,7 +22,6 @@ function clearDirectory(tempDirectory) {
 }
 
 module.exports = {
-    resolveHtmlPath,
     convertToBase64,
     clearDirectory
 };
