@@ -14,6 +14,7 @@ function clearDirectory(tempDirectory) {
         if (err) throw err;
 
         for (const currentFile of fileList) {
+            if(currentFile === '.gitkeep') continue;
             fs.unlink(path.join(__dirname, tempDirectory, currentFile), err => {
                 if (err) throw err;
             });

@@ -74,12 +74,15 @@ const createWindow = () => {
     new AppUpdater();
 };
 
-ipcMain.handle('rotate', (event, angle, path) => {
+ipcMain.handle('rotate', (event, angle, path, size) => {
     if(!fs.existsSync(path)) {
         mainWindow.webContents.send('pathImage', '', 'File doesn\'t exist');
         return;
     }
-    exec(`convert ${path} -distort SRT "%[fx:aa=${angle}*pi/180;(w*abs(sin(aa))+h*abs(cos(aa)))/min(w,h)], ${angle}" ${path}`, async (error, stdout, stderr) => {
+    const isHorizontal = size?.width > size?.height;
+    const value = isHorizontal ? 'min' : 'max';
+
+    exec(`convert ${path} -distort SRT "%[fx:aa=${angle}*pi/180;(w*abs(sin(aa))+h*abs(cos(aa)))/${value}(w,h)], ${angle}" ${path}`, async (error, stdout, stderr) => {
         if (error) {
             console.error(`error: ${error.message}`);
             return;

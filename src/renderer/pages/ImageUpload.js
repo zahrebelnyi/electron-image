@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState }         from "react";
 import { IconClockwise, IconCounterClockwise } from "../Icons";
-import { updateCanvas }                        from "../helpers/helpers";
+import { getSizeImage, updateCanvas }          from "../helpers/helpers";
 import { Spinner }                             from "../components/spinner";
 
 export const ImageUpload = () => {
     const [img, setImg] = useState('');
+    const [sizeImage, setSizeImage] = useState({});
     const [pathImage, setPathImage] = useState('');
     const [processing, setProcessing] = useState(false);
     const canvasRef = useRef();
@@ -16,7 +17,7 @@ export const ImageUpload = () => {
     async function rotateRight() {
         try {
             setProcessing(true);
-            await window.image.rotate(+0.5, pathImage);
+            await window.image.rotate(+0.5, pathImage, sizeImage);
         } catch (e) {
             console.log('ERROR Rotate right', e);
         }
@@ -25,7 +26,7 @@ export const ImageUpload = () => {
     async function rotateLeft() {
         try {
             setProcessing(true);
-            await window.image.rotate(-0.5, pathImage);
+            await window.image.rotate(-0.5, pathImage, sizeImage);
         } catch (e) {
             console.log('ERROR Rotate left', e);
         }
@@ -44,9 +45,15 @@ export const ImageUpload = () => {
         updateCanvas(canvasRef.current, img);
     }
 
+    async function handleGetSize() {
+        const sizeImage = await getSizeImage(img);
+        setSizeImage(sizeImage);
+    }
+
     useEffect(() => {
         handleUpdateCanvas();
         setProcessing(false);
+        handleGetSize();
     }, [img]);
 
     const handleSetImage = (image, path) => {

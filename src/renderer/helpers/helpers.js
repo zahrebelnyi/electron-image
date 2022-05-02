@@ -14,6 +14,26 @@ export function drawGrid(ctx, canvas) {
     ctx.stroke();
 }
 
+export async function getSizeImage(image) {
+    const newImg = new Image();
+
+    return new Promise((resolve, reject) => {
+        try {
+            newImg.src = image;
+
+            newImg.onload = function() {
+                 resolve({
+                    width: newImg.width,
+                    height: newImg.height
+                });
+            }
+
+        } catch (e) {
+            reject();
+        }
+    });
+}
+
 export function updateCanvas(canvasRef, img) {
     const canvas = canvasRef;
     const ctx = canvas.getContext('2d');
@@ -21,7 +41,7 @@ export function updateCanvas(canvasRef, img) {
 
     newImg.onload = function() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if(newImg.width < canvas.width) {
+        if(newImg.width < canvas.width && newImg.height < canvas.height) {
             // Draw To the center
             ctx.drawImage(newImg, canvas.width / 2 - newImg.width / 2, canvas.height / 2 - newImg.width / 2);
         } else {

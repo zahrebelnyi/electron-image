@@ -20,5 +20,5 @@ contextBridge.exposeInMainWorld('electron', {
 
 contextBridge.exposeInMainWorld('image', {
     upload: () => ipcRenderer.invoke('showDialog'),
-    rotate: (angle, path) => ipcRenderer.invoke('rotate', angle, path),
+    rotate: (angle, path, size) => ipcRenderer.invoke('rotate', angle, path, size),
 });
