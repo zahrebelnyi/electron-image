@@ -11,7 +11,6 @@
     "bootstrap": "^5.1.3",
     "concurrently": "^7.1.0",
     "cross-env": "^7.0.3",
-    "electron": "^18.2.0",
     "electron-is-dev": "^2.0.0",
     "imagemagick": "^0.1.3",
     "react": "^18.1.0",
@@ -27,7 +26,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "postinstall": "electron-builder install-app-deps && brew install imagemagick && opencollective-postinstall",
+    "postinstall": "electron-builder install-app-deps && opencollective-postinstall",
     "electron:serve": "concurrently -k \"cross-env NODE_ENV=development BROWSER=none npm run start\" \"npm run electron:start\"",
     "electron:build": "npm run build && electron-builder -c.extraMetadata.main=build/main.js",
     "electron:start": "wait-on tcp:3000 && electron .",
@@ -109,6 +108,7 @@
     "./imagemagick/**"
   ],
   "devDependencies": {
+    "electron": "^18.2.0",
     "electron-builder": "^23.0.3",
     "electron-log": "^4.4.6",
     "electron-rebuild": "^3.2.7",
